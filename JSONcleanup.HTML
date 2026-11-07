@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="style.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Hi+Melody&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <h1>DOGGI JSON <s>MERGER</s> SHOW-ER</h1>
+  <div class="main">
+    <div id="sidebar">
+      <div class="sidebarSet">
+        <h4>Show File</h4>
+        <h4>Submit Main Json</h4>
+        <input type="file" id="JSONmain" accept=".json">
+        <h4>Submit TNT Json</h4>
+        <input type="file" id="JSONtnt" accept=".json">
+        <br>
+        <h4>Once both files are there, click submit!</h4>
+        <button type="button" onClick="handleFileSelection()">Submit</button>
+      </div>
+    </div>
+    <div id="preview">
+        <div id="message"></div>
+<pre id="file-content"></pre>
+    </div>
+  </div>
+
+  <script>
+const fileContentDisplay = document.getElementById("file-content");
+const messageDisplay = document.getElementById("message");
+const fileInput = document.getElementById("JSONmain");
+const fileInput2 = document.getElementById("JSONtnt");
+
+function handleFileSelection() {
+  const fileMain = fileInput.files[0];
+  const fileTNT = fileInput2.files[0];
+  fileContentDisplay.textContent = ""; // Clear previous file content
+  messageDisplay.textContent = ""; // Clear previous messages
+
+  // Validate file existence and type
+  if (!fileMain || !fileTNT) {
+    showMessage("No file selected. Please choose a file. >:(", "error");
+    return;
+  }
+
+  // Read the file
+  const reader = new FileReader();
+  reader.onload = () => {
+    // shows file for added clarity
+    fileContentDisplay.textContent = reader.result;
+    readedJSON = JSON.parse(reader.result);
+    // check that it actually parses it as JSON
+    console.log(readedJSON.sources);
+  };
+  reader.onerror = () => {
+    showMessage("Error reading the file. Please try again.", "error");
+  };
+  // reads fileMain first, does reader.onload() then does fileTNT. Shouldn't TNT overwrite Main? 
+  reader.readAsText(fileMain);
+  reader.readAsText(fileTNT);
+}
+
+// Displays a message to the user
+function showMessage(message, type) {
+  messageDisplay.textContent = message;
+  messageDisplay.style.color = type === "error" ? "red" : "green";
+}
+
+  </script>
+</body>
+
+</html>
