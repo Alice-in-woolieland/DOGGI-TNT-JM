@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <link href="style.css" rel="stylesheet" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Hi+Melody&display=swap" rel="stylesheet" />
+  <title>JSON cleanup</title>
+  <link href="style.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Hi+Melody&display=swap" rel="stylesheet">
 </head>
 <body>
   <h1>DOGGI JSON <s>MERGER</s> SHOW-ER</h1>
@@ -19,7 +19,7 @@
         <input type="file" id="JSONtnt" accept=".json">
         <br>
         <h4>Once both files are there, click submit!</h4>
-        <button type="button" onClick="handleFileSelection()">Submit</button>
+        <button type="button" onclick="handleFileSelection()">Submit</button>
       </div>
     </div>
     <div id="preview">
@@ -48,19 +48,24 @@ function handleFileSelection() {
 
   // Read the file
   const reader = new FileReader();
-  reader.onload = () => {
+  const reader2 = new FileReader();
+  reader.addEventListener("load", (event) => {
     // shows file for added clarity
-    fileContentDisplay.textContent = reader.result;
+    fileContentDisplay.textContent += reader.result;
     readedJSON = JSON.parse(reader.result);
     // check that it actually parses it as JSON
     console.log(readedJSON.sources);
-  };
-  reader.onerror = () => {
-    showMessage("Error reading the file. Please try again.", "error");
-  };
+  });
+  reader2.addEventListener("load", (event) => {
+    // shows file for added clarity
+    fileContentDisplay.textContent += reader2.result;
+    readedJSON = JSON.parse(reader2.result);
+    // check that it actually parses it as JSON
+    console.log(readedJSON.sources);
+  });
   // reads fileMain first, does reader.onload() then does fileTNT. Shouldn't TNT overwrite Main? 
   reader.readAsText(fileMain);
-  reader.readAsText(fileTNT);
+  reader2.readAsText(fileTNT);
 }
 
 // Displays a message to the user
