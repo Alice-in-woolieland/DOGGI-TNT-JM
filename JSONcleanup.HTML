@@ -47,25 +47,40 @@ function handleFileSelection() {
   }
 
   // Read the file
-  const reader = new FileReader();
-  const reader2 = new FileReader();
-  reader.addEventListener("load", (event) => {
+  const readerMain = new FileReader();
+  const readerTNT = new FileReader();
+  readerMain.addEventListener("load", (event) => {
     // shows file for added clarity
-    fileContentDisplay.textContent += reader.result;
-    readedJSON = JSON.parse(reader.result);
+    fileContentDisplay.textContent += readerMain.result;
+    mainReading = JSON.parse(readerMain.result);
     // check that it actually parses it as JSON
-    console.log(readedJSON.sources);
+    console.log(mainReading.sources);
   });
-  reader2.addEventListener("load", (event) => {
+  readerTNT.addEventListener("load", (event) => {
     // shows file for added clarity
-    fileContentDisplay.textContent += reader2.result;
-    readedJSON = JSON.parse(reader2.result);
+    fileContentDisplay.textContent += readerTNT.result;
+    tntReading = JSON.parse(readerTNT.result);
     // check that it actually parses it as JSON
-    console.log(readedJSON.sources);
+    console.log(tntReading.sources);
+    // grab the TNT logger's name and recording date.
+    doggiName = tntReading.name;
+    doggiRecord = tntReading.recordedAt;
+    console.log(doggiName + doggiRecord);
+    // grab number of unique sources from TNT logs for number of iterations.
+    sourceNames = Object.keys(tntReading.sources);
+    console.log(sourceNames.length);
+    
+    //loop sourceNames.length amount of times, then add name + record and change "count" to "kills" for each of the sources.
+    // also add up all of the kills/number of items, if possible.
+
+
   });
   // reads fileMain first, does reader.onload() then does fileTNT. Shouldn't TNT overwrite Main? 
-  reader.readAsText(fileMain);
-  reader2.readAsText(fileTNT);
+  readerMain.readAsText(fileMain);
+  readerTNT.readAsText(fileTNT);
+  // Check that sourceNames from TNT match up with sourceNames from MAIN. Then create new "entry" using the information.
+  // add kills and number of items to MAIN's header.
+  // then export as new merged JSON.
 }
 
 // Displays a message to the user
