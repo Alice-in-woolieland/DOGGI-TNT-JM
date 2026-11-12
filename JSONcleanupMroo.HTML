@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>JSON cleanup</title>
+  <link href="style.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Hi+Melody&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>DOGGI JSON <s>SHOW-ER</s> MERGER</h1>
+  <div class="main">
+    <div id="sidebar">
+      <div class="sidebarSet">
+        <h4>Show File</h4>
+        <h4>Submit Main Json</h4>
+        <input type="file" id="JSONmain" accept=".json">
+        <h4>Submit TNT Json</h4>
+        <input type="file" id="JSONtnt" accept=".json">
+        <br>
+        <h4>Once both files are there, click submit!</h4>
+        <button type="button" onclick="handleFileSelection()">Submit</button>
+        <h4>Check the data... then...! Download!</h4>
+        <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a#attr-download-->
+         <!-- add this attribute or sometihng idk whatever-->
+        <a href="this will eventually be the thing that kills me">
+          <button type="button">DOWNLOAD!</button></a>
+      </div>
+    </div>
+    <div id="preview">
+        <div id="message"></div>
+<pre id="file-content"></pre>
+    </div>
+  </div>
+
+  <script>
+const fileContentDisplay = document.getElementById("file-content");
+const messageDisplay = document.getElementById("message");
+const fileInput = document.getElementById("JSONmain");
+const fileInput2 = document.getElementById("JSONtnt");
+
+class DoggiDB {
+  constructor() {
+    this.formatVersion = 1;
+    this.exportedAt = new Date().toISOString();
+    this.summary = {
+      totalKills: 0,
+      totalSources: 0,
+      totalItems: 0,
+    };
+    this.sources = {};
+  }
+  refreshSummary() {
+    this.summary.totalSources = Object.keys(this.sources).length;
+    this.summary[(totalKills, totalItems)] = [0, 0];
+    for (const source in Object.values(this.sources)) {
+      for (const entry in source.entries) {
+        this.summary.totalKills += entry.kills;
+        for (const item in entry.items) {
+          this.summary.totalItems += item.quantity;
+        }
+      }
+    }
+  }
+  updateSummaryFromEntry(new_entry) {
+    this.summary.totalSources = Object.keys(this.sources).length;
+    this.summary.totalKills += new_entry.kills;
+    new_entry.items.forEach((item) => {
+      this.summary.totalItems += item.quantity;
+    });
+  }
+  addNewEntry(source_key, new_entry) {
+    this.sources[source_key] ||= {};
+    this.sources[source_key].entries = (this.sources[source_key]?.entries || []).concat(new_entry);
+    this.updateSummaryFromEntry(new_entry);
+  }
+  populateFromTNT(obj) {
+    for (const source_key in obj.sources) {
+      this.sources[source_key] ||= {};
+      this.sources[source_key].entries ||= [];
+      let doggi_entry = new DoggiEntry();
+      doggi_entry.fromTNT(source_key, obj);
+      if (
+        this.sources[source_key].entries.every(
+          (e) =>
+            (e.name, e.recordedAt) != (doggi_entry.name, doggi_entry.recordedAt)
+        )
+      ) {
+        this.addNewEntry(source_key, doggi_entry);
+      } else {
+        console.log(
+          `ignoring duplicate entry (name= ${doggi_entry.name}, recordedAt= ${doggi_entry.recordedAt})...`,
+        );
+      }
+    }
+  }
+  populateFromObj(obj) {
+    for (const source_key in obj.sources) {
+      this.sources[source_key] ||= {};
+      for (const entry_index in obj.sources[source_key].entries) {
+        this.sources[source_key].entries ||= [];
+        // need to check sources against existing source list and then fix the names to match existing ones. fuzzy matching, as the kids might say. -alice
+        const new_entry = obj.sources[source_key].entries[entry_index]; 
+        if (
+          this.sources[source_key].entries.every(
+            (e) =>
+              (e.name, e.recordedAt) != (new_entry.name, new_entry.recordedAt)
+          )
+        ) {
+          let doggi_entry = new DoggiEntry();
+          doggi_entry.fromObj(new_entry);
+          this.addNewEntry(source_key, doggi_entry);
+        } else {
+          console.log(
+            `ignoring duplicate entry (name= ${new_entry.name}, recordedAt= ${new_entry.recordedAt})...`,
+          );
+        }
+      };
+    }
+  }
+}
+class DoggiEntry {
+  constructor() {
+    this.kills = 0;
+    this.items = new Array();
+    this.recordedAt = new String();
+    this.name = new String();
+  }
+  fromTNT(source_key, obj) {
+    this.kills = obj.sources[source_key]?.count ?? 0;
+    this.items = obj.sources[source_key]?.items ?? [];
+    this.recordedAt = obj.recordedAt;
+    this.name = obj.name;
+  }
+  fromObj(entry) {
+    this.kills = entry.kills;
+    this.items = entry.items;
+    this.recordedAt = entry.recordedAt;
+    this.name = entry.name;
+  }
+}
+
+function handleFileSelection() {
+  const fileMain = fileInput.files[0];
+  const fileTNT = fileInput2.files[0];
+  const doggi_db = new DoggiDB();
+  fileContentDisplay.textContent = ""; // Clear previous file content
+  messageDisplay.textContent = ""; // Clear previous messages
+
+  // Validate file existence and type
+  if (!fileMain || !fileTNT) {
+    showMessage("No file selected. Please choose a file. >:(", "error");
+    return;
+  }
+
+  // Read the file
+  const readerMain = new FileReader();
+  const readerTNT = new FileReader();
+  readerMain.addEventListener("load", (event) => {
+    // shows file for added clarity
+    mainReading = JSON.parse(readerMain.result);
+    doggi_db.populateFromObj(mainReading);
+    fileContentDisplay.textContent = JSON.stringify(doggi_db); // Clear previous file content
+    // check that it actually parses it as JSON
+    console.log("main")
+    console.log(mainReading);
+  });
+  readerTNT.addEventListener("load", (event) => {
+    // shows file for added clarity
+    tntReading = JSON.parse(readerTNT.result);
+    doggi_db.populateFromTNT(tntReading);
+    displayformatting = JSON.stringify(doggi_db);
+    // man i dont fking know at this point. this is just to make it actually readable. ill probably replace the viewing window w a proper txtbox. whateverrrrrrrr who cares - alice
+    displayformatting = displayformatting.replaceAll(",", ", \r\n");
+    displayformatting = displayformatting.replaceAll("}", " \r\n }");
+    displayformatting = displayformatting.replaceAll("{", " \r\n { \r\n");
+    fileContentDisplay.textContent = displayformatting; // Clear previous file content
+    // check that it actually parses it as JSON
+    console.log("TNT");
+    console.log(tntReading);
+    // grab the TNT logger's name and recording date.
+    //doggiName = tntReading.name;
+    //doggiRecord = tntReading.recordedAt;
+    //console.log(doggiName + doggiRecord);
+    // grab number of unique sources from TNT logs for number of iterations.
+    //sourceNames = Object.keys(tntReading.sources);
+    //console.log(sourceNames.length);
+    
+    //loop sourceNames.length amount of times, then add name + record and change "count" to "kills" for each of the sources.
+    // also add up all of the kills/number of items, if possible.
+
+
+  });
+  // reads fileMain first, does reader.onload() then does fileTNT. Shouldn't TNT overwrite Main? 
+  readerMain.readAsText(fileMain);
+  readerTNT.readAsText(fileTNT);
+  // Check that sourceNames from TNT match up with sourceNames from MAIN. Then create new "entry" using the information.
+  // add kills and number of items to MAIN's header.
+  // then export as new merged JSON.
+}
+
+// Displays a message to the user
+function showMessage(message, type) {
+  messageDisplay.textContent = message;
+  messageDisplay.style.color = type === "error" ? "red" : "green";
+}
+
+
+  </script>
+</body>
+
+</html>
