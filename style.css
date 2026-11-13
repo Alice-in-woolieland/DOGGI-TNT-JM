@@ -57,7 +57,7 @@ h1 {
     -ms-border-radius:5px;
     -o-border-radius:5px;
       box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.212);
-    background-image:url("/TNTDOGGIJAM.png");
+    background-image:url("#/TNTDOGGIJAM.png");
     position-anchor:fixed;
     background-position:bottom;
     background-size:contain;
