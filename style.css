@@ -1,7 +1,20 @@
 body{
     background-color:rgb(43, 43, 43);
     color:white;
-    font-family:sans-serif;
+    font-family: sans-serif;
+      font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+body h1, body p{
+margin-left:5%;
+}
+body h1 sub{
+font-weight:300; font-size:.5em;
+}
+h1 {
+    font-weight:800;
 }
 #preview {
     width:70%;
@@ -14,11 +27,22 @@ body{
     -ms-border-radius:5px;
       box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.212);
     -o-border-radius:5px;
-    overflow:scroll;
 }
-#preview img {
-    max-height:100%;
-    max-width:100%;
+#file-content {
+    overflow-y:scroll;
+    width:100%;
+    text-wrap: wrap;
+    height:80%;
+}
+#txt-box {
+    max-height:10%;
+    width:95%;
+    position:relative;
+    bottom:0px;
+    resize:none;
+}
+#message {
+    height:8%;
 }
 #canvas {
     color:white;
@@ -33,7 +57,13 @@ body{
     -ms-border-radius:5px;
     -o-border-radius:5px;
       box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.212);
+    background-image:url("/TNTDOGGIJAM.png");
+    position-anchor:fixed;
+    background-position:bottom;
+    background-size:contain;
+    background-repeat:no-repeat;
 }
+
 .main {
     display:flex;
     width:90%;
@@ -53,6 +83,8 @@ body{
     background-color:rgba(0, 0, 0, 0.315);
     padding:5px;
     margin-bottom:5px;
+    padding-left:15px;
+    padding-right:5px;
 }
 #updatepreview{
     margin-left:30%;
